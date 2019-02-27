@@ -1,0 +1,26 @@
+##### ANÁLISIS DE RESIDUALES
+#####Pruebas de autocorrelacion
+## Pogmantu contrasta las correlaciones de los residuos y filtra las de relevanvia
+install.packages("ggplot2")
+require(ggplot2)
+install.packages("forecast")
+require(forecast)
+install.packages("fpp2")
+require(fpp2)
+####analisis correlograma
+### para separar datos en entrenamiento y prueba la prueba es no menor a 20%
+pib<-read.csv("C://Users//ALUMNO-D10//Documents//PIB m.csv")
+pibt<-ts(pib, start = 1960, frequency = 1)
+plot(pibt)
+mod1 <-ses(pibt, alpha = 0.1, initial = "simple", h=8)
+mod2 <-ses(pibt, alpha = 0.3, initial = "simple", h=8)
+mod3 <-ses(pibt, alpha = .9, h=8)
+###Graficar valores conjuntos ajustdos fitted para valores ajustados
+plot(mod1, ylab = "pib",
+     xlab="año", main="pib", type="o")
+lines(fitted(mod1), col="brown", type="o")
+lines(fitted(mod2), col="red", type="o")
+lines(fitted(mod3), col="green", type="o")
+legend("topleft", lty = 1, col = c(1, "blue", "red", "green"),
+       c("data", expression(alpha=0.1), expression(alpha=0.3),
+         expression(alpha(0.9)), pch=1)
