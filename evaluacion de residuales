@@ -1,0 +1,20 @@
+######ejercicio############
+#con la funcion window separen la serie del pib
+#en datos de prueba (20%) y grafique los modelos solo en lo qie se corresponde
+#a los datos de prueba
+pib1<-read.csv("C:/Users/ALUMNO-D10/Documents/PIB m.csv")
+pibt<-ts(pib1, start = 1961, frequency = 1)
+pib2<- window(pibt, start = 2003, end = 2015)
+plot(pib2)
+mod4 <-ses(pib2, alpha = 0.1, initial = "simple", h=8)
+mod5 <-ses(pib2, alpha = 0.3, initial = "simple", h=8)
+mod6 <-ses(pib2, alpha = .9, h=8)
+#valores ajustados
+plot(mod4, ylab = "PIB prueba 20%",
+     xlab="año", main="pib2", type="o")
+lines(fitted(mod4), col="brown", type="o")
+lines(fitted(mod5), col="red", type="o")
+lines(fitted(mod6), col="green", type="o")
+legend("topleft", lty = 1, col = c(1, "blue", "red", "green"),
+       c("data", expression(alpha=0.1), expression(alpha=0.3),
+         expression(alpha(0.9)), pch=1)
