@@ -1,1 +1,20 @@
-kjbkjnk
+#Acciones
+net<-read.csv("C://Users//sala-D19//Downloads//TLEVISACPO.MX.csv")
+acciones<-ts(net, start = 2018, frequency = 252)
+plot((acciones))
+### Metodo del ingenuo para pronosticos
+naive(st, h)
+ingenuo <- naive (acciones)
+plot(ingenuo)
+#evaluacion de residuales
+pronos <- naive (acciones)
+names (pronos)
+res1<-residuals (naive (acciones))
+#graficar
+autoplot(acciones)
+autoplot(res1)
+gghistogram(res1)
+#para graficar los residuos si pasan la frontera tiene correlacion y el modelo puede mejorarse.
+###analisis por correlograma
+ggAcf(res1)
+#### prueba del Frances
