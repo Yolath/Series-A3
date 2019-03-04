@@ -1,0 +1,46 @@
+install.packages("ggplot2")
+require(ggplot2)
+install.packages("forecast")
+require(forecast)
+install.packages("fpp2")
+require(fpp2)
+tv<- read.csv("C://Users//sala-D17.RTIC-D17//Downloads//TLEVISACPO.MX.csv")
+tv1 <- ts(tv, start = 2018, frequency = 252)
+#serie de tiempo con tendencia
+plot(tv1)
+### metodo a la deriva para series con tendencia
+rwf (y, h drift = TRUE)
+deriva <- rwf(tv1, 20, drift = TRUE)
+plot(deriva)
+##separacion de serie
+tv2 <- window(tv1, start = 2018.4, end = 2018.8)
+plot(tv2)
+mod4 <-ses(tv2, alpha = 0.1, initial = "simple", h=8)
+mod5 <-ses(tv2, alpha = 0.3, initial = "simple", h=8)
+mod6 <-ses(tv2, alpha = .9, h=8)
+#valores ajustados
+plot(mod4, ylab = "Acciones valores de prueba 20%",
+     xlab="año", main="televisa", type="o")
+lines(fitted(mod4), col="brown", type="o")
+lines(fitted(mod5), col="red", type="o")
+lines(fitted(mod6), col="green", type="o")
+legend("topleft", lty = 1, col = c(1, "blue", "red", "green"),
+       c("data", expression(alpha=0.1), expression(alpha=0.3),
+         expression(alpha(0.9)), pch=1)
+####### errores de prueba
+tv3 <- meanf(tv2, h=10)
+tv4 <- rwf(tv2, h=10)
+tv5 <- snaive(tv2, h=10)
+
+autoplot(window(tv2, start = 2018))+
+  autolayer(tv3, series = "media", PI=FALSE)+
+  autolayer(tv4, series = "ingenuo", PI=FALSE)+
+  autolayer(tv5, series = "ingenuo estacional", PI=FALSE)+
+  ggtitle("pronosticos de acciones de televisora")+ xlab("año")+
+  ylab("precio de las acciones") +guides(colour=guide_legend(title = "pronostico"))
+###### PARA SACAR LOS ERRORES
+tv6 <- window(tv2, start = 2018.6)
+acuracy(tv3, tv6)
+accuracy(tv4, tv6)
+accuracy(tv5, tv6)
+#los importantes son RSME MAE MAPE Tienen que ser cercano a 0
