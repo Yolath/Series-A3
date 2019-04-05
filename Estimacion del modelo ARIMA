@@ -1,0 +1,51 @@
+###########################
+#Estiamndo un modelo ARIMA
+
+#Podemos especificar la estructura ARIMA no estacional y ajustar el modelo para desestacionalizar los datos. Los parámetros (1,1,1) sugeridos por el procedimiento automatizado están en línea con nuestras expectativas basadas en los pasos anteriores; el modelo incorpora diferenciación de grado 1 y utiliza un término autorregresivo de primer retardo y un modelo de promedio móvil de orden 1:
+
+auto.arima(datos_ejercicio.ts, seasonal=FALSE)
+
+
+#Escribir la ecuacion del modelo obtenido:
+
+
+
+####Evaluar e iterar
+
+#Entonces, ahora hemos ajustado un modelo que puede producir un pronostico, pero ¿tiene sentido? 
+#¿Podemos confiar en este modelo? Podemos comenzar examinando los graficos ACF y PACF para los residuos del modelo. 
+#Si los parametros de orden del modelo y la estructura se especifican correctamente, 
+#no esperariamos que hubiera autocorrelaciones significativas.
+
+arima_estimado <-auto.arima(datos_ejercicio.ts, seasonal=FALSE)
+x11();tsdisplay(residuals(arima_estimado), lag.max=45, main="(1,1,1)")
+
+#Podemos repetir el proceso de ajuste que permite el componente MA(6) y examinar los diagramas de diagnostico nuevamente. 
+#Esta vez, no hay autocorrelaciones significativas presentes. Si el modelo no se especifica correctamente, 
+#eso generalmente se reflejara en residuos en forma de tendencias, o cualquier otro patron no capturado por el modelo. 
+#Idealmente, los residuos deberian verse como ruido blanco, lo que significa que  se distribuyen normalmente. 
+#Se puede usar una funcion de conveniencia tsdisplay () para trazar estos diagnosticos del modelo. 
+#Los diagramas de residuales muestran un rango de error más pequeño, mas o menos centrado alrededor de 0. Podemos observar que AIC es más pequeño para la estructura (1, 1, 7) también:
+
+arima_estimado2 = arima(datos_ejercicio.ts, order=c(1,1,1))
+
+arima_estimado2
+
+tsdisplay(residuals(arima_estimado2), lag.max=15, main="Residuos de ARIMA estacional estimado")
+
+################
+#Los pronosticos de un modelo ajustado deben especificar el horizonte de pronostico 
+#h periodos por delante  y usar el modelo ajustado para generar los pronosticos:
+pronosticos_arima_estimado2 <- forecast(arima_estimado2, h=30)
+x11();plot(pronosticos_arima_estimado2)
+#La linea azul clara de arriba muestra el ajuste proporcionado por el modelo, 
+#pero ¿que pasaria si quisieramos tener una idea de como funcionara el modelo en el futuro? 
+#Un metodo es reservar una parte de nuestros datos como un conjunto de "validacion",
+#ajustar el modelo y luego comparar el pronostico con los valores reales observados:
+modelo_basico <- window(ts(datos_ejercicio.ts), start=700)
+
+modelo_valida2 <- arima(ts(datos_ejercicio.ts[-c(700:725)]), order=c(1,1,6))
+
+modelo_valida3 <- forecast(modelo_valida2, h=30)
+x11();plot(modelo_valida3, main=" ")
+lines(ts(datos_ejercicio.ts))
