@@ -1,0 +1,32 @@
+###############################EJERCICIO#################################################
+#APLICACION MANUAL DE ARIMA
+install.packages("fpp2")
+install.packages("foreign")
+install.packages("tseries")
+require(fpp2)
+require(foreign)
+require(tseries)
+bim <- read.csv("C://Users//sala-D17.RTIC-D17//Downloads//BIMBOA.MX (2).csv")
+#el cinco es para extraer la columna que queremos sin convertirla
+bimbo <- ts(bim[, 5], frequency = 252, start = 2018)
+#REVIZAMOS SI HAY ESTACIONALIDAD (que sea menor a .05)
+adf.test(bimbo)
+#p-value es mayor a .05 por tanto se rechaza la hipotesis alternativa asi que no es estacionaria.
+#APLICAMOS DIFERENCIACION
+#aplicamos la priera diferenciacion con la funcion diff debido a que no es estacionaria
+dbimts <- diff(bimbo)
+adf.test(dbimts)
+#EL VALOR DE P- VALUE ES MENOR A .05 AHORA LA SERIE YA ES ESTACIONAL.
+D=1 YA QUE SE AJUSTO EN LA PRIMERA DIFERENCIACION. (MENOR A DOS)
+
+##########################APLICACION DE CORRELOGRAMAS#######################################
+#P ESTA DADO POR LAS LINEAS AUTORREGRESIVAS LAS QUE PASEN EL ACF (MENOR A CUATRO)
+#Q SE DETERMINA POR LOS QUE PASEN EL PACF ((MENOR A DOS))
+install.packages("forecast")
+require(forecast)
+par(mfrow= c(1,2)) #<- PARA QUE LAS GRAFIQUE JUNTITAS <3
+acf(dbimts)
+pacf(dbimts)                   #p,d,q
+modbim1 <- Arima(dbimts,orden=c(2,1,0))
+modbim2 <- Arima(dbimts,orden=c(2,1,0))
+modbim3 <- Arima(dbimts,orden=c(3,1,0))
