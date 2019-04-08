@@ -1,0 +1,33 @@
+############ ejercicio arima manual 2####################
+install.packages("forecast")
+install.packages("fpp2")
+install.packages("tseries")
+install.packages("readxl")
+install.packages("foreign")
+require(forecast)
+require(foreign)
+require(fpp2)
+require(tseries)
+require(readxl)
+########## ejercicio solar
+plot(sunspots)
+# 1 ver si es estacionaria
+adf.test(sunspots)
+#p- vslue es .01 YA ES ESTACIONARIA Y NO HAY QUE APLICAR DIFERENCIACION
+# 4 APLICAMOS CORRELOGRAMAS
+par(mfrow= c(1,2))
+acf(sunspots)
+pacf(sunspots)
+# 5
+mod1 <- Arima(sunspots, order = c(1,0,0))
+mod1 #502.57
+mod2 <- Arima(sunspots, order = c(1,0,0))
+mod2 #503.24
+mod3 <- Arima(sunspots, order = c(2,0,0))
+mod3 #503.72
+mod4 <- Arima(sunspots, order = c(3,0,0))
+mod4 #505.03
+modres <- residuals(mod1)
+Box.test(modres, lag = 12, type = "Ljung-Box")
+mod1 <- forecast(mod1,h=12)
+plot(forecast(mod1,h=12), include = 18)
